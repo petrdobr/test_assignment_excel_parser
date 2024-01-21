@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ProductCharacteristic;
 use Illuminate\Http\Request;
 use App\Imports\ProductImport;
 use Maatwebsite\Excel\Facades\Excel;
@@ -25,8 +26,6 @@ class ProductController extends Controller
         $import = new ProductImport();
         Excel::import($import, $file);
 
-        $collection = Excel::toCollection($import, $file);
-
         return redirect('/products')->with('success', 'Data imported successfully!');
     }
 
@@ -40,6 +39,7 @@ class ProductController extends Controller
                 return $barcode !== NULL;
             });
         }, $barcodes);
-        return view("products", ['products' => $products, 'barcodes' => $barcodes]);
+        $chars = ProductCharacteristic::all();
+        return view("products", ['products' => $products, 'barcodes' => $barcodes, 'chars' => $chars]);
     }
 }

@@ -3,22 +3,21 @@
 namespace App\Imports;
 
 use App\Models\Product;
+use App\Models\ProductCharacteristic;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Imports\HeadingRowFormatter;
+use Maatwebsite\Excel\Row;
+use Maatwebsite\Excel\Concerns\OnEachRow;
 
 HeadingRowFormatter::default('none');
 
-class ProductImport implements ToModel, WithHeadingRow
+class ProductImport implements OnEachRow, WithHeadingRow
 {
-    /**
-    * @param array $row
-    *
-    * @return \Illuminate\Database\Eloquent\Model|null
-    */
     
-    public function model(array $row)
+    public function onRow(Row $row)
     {
+        $row = $row->toArray();
         $barcodes = json_encode([
             'EAN13' => $row["Штрихкод EAN13"],
             'EAN8' => $row["Штрихкод EAN8"],
@@ -36,7 +35,8 @@ class ProductImport implements ToModel, WithHeadingRow
             'photo_links' => $row["Доп. поле: Ссылки на фото"],
         ]);
         $price = str_replace(',', '.', ltrim($row["Цена: Цена продажи"], "'"));
-        return new Product([
+        
+        $product = Product::create([
             "name" => $row["Наименование"],
             "price" => $price,
             "discount" => $row["Запретить скидки при продаже в розницу"],
@@ -46,6 +46,43 @@ class ProductImport implements ToModel, WithHeadingRow
             "barcodes" => $barcodes,
             "additional_features" => $additional,
         ]);
+
+        $productId = $product->id;
+
+        $excludeKeys = [
+            "Наименование",
+            "Запретить скидки при продаже в розницу",
+            "Описание",
+            "Тип",
+            "Внешний код",
+            "Штрихкод EAN13",
+            "Штрихкод EAN8",
+            "Штрихкод Code128",
+            "Штрихкод UPC",
+            "Штрихкод GTIN",
+            "Цена: Цена продажи",
+            "Доп. поле: Размер",
+            "Доп. поле: Цвет",
+            "Доп. поле: Бренд",
+            "Доп. поле: Состав",
+            "Доп. поле: Кол-во в упаковке",
+            "Доп. поле: Ссылка на упаковку",
+            "Доп. поле: Ссылки на фото",
+            ];
+
+        $characteristics = array_filter($row, function ($key) use ($excludeKeys) {
+            return !in_array($key, $excludeKeys);
+        }, ARRAY_FILTER_USE_KEY);
+
+        foreach($characteristics as $key => $value) {
+            if ($value !== null) {
+                ProductCharacteristic::create([
+                    'product_id' => $productId,
+                    'key' => $key,
+                    'value' => $value,
+                ]);
+            }
+        }
     }
 
 }

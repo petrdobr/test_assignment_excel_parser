@@ -18,4 +18,9 @@ class Product extends Model
         'barcodes',
         'additional_features',
     ];
+
+    public function characteristics()
+    {
+        return $this->hasMany(ProductCharacteristic::class);
+    }
 }

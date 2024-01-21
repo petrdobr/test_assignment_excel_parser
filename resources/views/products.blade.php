@@ -34,4 +34,10 @@
 @endforeach
 </tbody>
 </table>
+<ul>
+@foreach($chars as $char)
+<li>{{ $char['product_id'] }}</li>
+<li>{{ $char['key'] }}</li>
+<li>{{ $char['value'] }}</li>
+@endforeach
 @endsection

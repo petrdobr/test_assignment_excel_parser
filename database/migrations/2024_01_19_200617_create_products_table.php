@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('discount')->nullable();
             $table->text('description')->nullable();
             $table->string('type');
-            $table->string('external_code');
+            $table->string('external_code')->unique();
             $table->json('barcodes');
             $table->json('additional_features')->nullable();
             $table->timestamps();
@@ -32,6 +32,15 @@ return new class extends Migration
             $table->string('value');
             $table->timestamps();
         });
+
+        Schema::create('product_photos', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('product_id');
+            $table->foreign('product_id')->references('product_id')->on('products');
+            $table->string('photo_link')->nullable();
+            $table->string('photo_path')->nullable();
+            $table->timestamps();
+        });
     }
 
     /**
@@ -40,6 +49,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('product_characteristics');
+        Schema::dropIfExists('product_photos');
         Schema::dropIfExists('products');
     }
 };

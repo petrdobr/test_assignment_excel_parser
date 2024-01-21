@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ProductCharacteristic;
+use App\Models\ProductPhoto;
 use Illuminate\Http\Request;
 use App\Imports\ProductImport;
 use Maatwebsite\Excel\Facades\Excel;
@@ -39,7 +40,7 @@ class ProductController extends Controller
                 return $barcode !== NULL;
             });
         }, $barcodes);
-        $chars = ProductCharacteristic::all();
-        return view("products", ['products' => $products, 'barcodes' => $barcodes, 'chars' => $chars]);
+        $photos = ProductPhoto::all();
+        return view("products", ['products' => $products, 'barcodes' => $barcodes, 'photos' => $photos]);
     }
 }

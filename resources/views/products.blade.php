@@ -7,6 +7,7 @@
 <table>
 <thead><tr>
 <th>№</th>
+<th>Фото</th>
     <th>Наименование</th>
     <th>Цена</th>
     <th>Скидка</th>
@@ -20,6 +21,10 @@
 @foreach($products as $product)
 <tr>
 <td>   {{ $product['product_id'] }} </td>
+<td> 
+    <img width="100" src="{{ $photos[$product->product_id]['photo_link'] }}" alt="{{ $product->name }} Photo">
+    
+</td>
     <td>   {{ $product['name'] }} </td>
     <td>   {{ $product['price'] }} </td>
     <td>   {{ $product['discount'] }} </td>
@@ -34,10 +39,4 @@
 @endforeach
 </tbody>
 </table>
-<ul>
-@foreach($chars as $char)
-<li>{{ $char['product_id'] }}</li>
-<li>{{ $char['key'] }}</li>
-<li>{{ $char['value'] }}</li>
-@endforeach
 @endsection

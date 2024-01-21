@@ -4,11 +4,14 @@ namespace App\Imports;
 
 use App\Models\Product;
 use App\Models\ProductCharacteristic;
-use Maatwebsite\Excel\Concerns\ToModel;
+use App\Models\ProductPhoto;
+use GuzzleHttp\Client;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Imports\HeadingRowFormatter;
 use Maatwebsite\Excel\Row;
 use Maatwebsite\Excel\Concerns\OnEachRow;
+use GuzzleHttp\Exception\ClientException;
+use Illuminate\Support\Facades\Storage;
 
 HeadingRowFormatter::default('none');
 
@@ -32,7 +35,6 @@ class ProductImport implements OnEachRow, WithHeadingRow
             'contents' => $row["Доп. поле: Состав"],
             'amount' => $row["Доп. поле: Кол-во в упаковке"],
             'package_link' => $row["Доп. поле: Ссылка на упаковку"],
-            'photo_links' => $row["Доп. поле: Ссылки на фото"],
         ]);
         $price = str_replace(',', '.', ltrim($row["Цена: Цена продажи"], "'"));
         
@@ -83,6 +85,38 @@ class ProductImport implements OnEachRow, WithHeadingRow
                 ]);
             }
         }
+
+        $photos = explode(',', trim($row["Доп. поле: Ссылки на фото"]));
+        $client = new Client();
+        foreach($photos as $photo) {
+            $photoPath = $this->storePhoto($photo, $client);
+            ProductPhoto::create([
+                "product_id" => $productId,
+                "photo_link" => $photo,
+                "photo_path" => $photoPath,
+            ]);
+        }
+    }
+
+    public function storePhoto(string $photoUrl, Client $client): string | null
+    {
+        if (!filter_var($photoUrl, FILTER_VALIDATE_URL)) {
+            return null;
+        }
+        try {
+            $photoContent = $client->get($photoUrl);
+        } catch (ClientException $e) {
+            return null;
+        }
+        $extension = pathinfo($photoUrl)['extension'];
+
+        $photoName = md5(uniqid()) . '.' . $extension;
+        $filePath = storage_path() . $photoName;
+        if (file_put_contents($filePath, $photoContent)) {
+            return $filePath;
+        }
+        return null;
+        
     }
 
 }

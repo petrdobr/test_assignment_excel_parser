@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,3 +17,6 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+Route::get('/upload', [ProductController::class, 'showForm']);
+Route::post('/upload', [ProductController::class, 'upload']);
+Route::get('/products', [ProductController::class, 'showProducts']);

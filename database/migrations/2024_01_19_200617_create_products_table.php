@@ -15,12 +15,12 @@ return new class extends Migration
             $table->id('product_id')->autoIncrement();
             $table->string('name');
             $table->float('price');
-            $table->float('discount');
+            $table->string('discount')->nullable();
             $table->text('description')->nullable();
             $table->string('type');
             $table->string('external_code');
-            $table->string('barcodes');
-            $table->text('additional_features');
+            $table->json('barcodes');
+            $table->json('additional_features')->nullable();
             $table->timestamps();
         });
 
@@ -39,7 +39,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('products');
         Schema::dropIfExists('product_characteristics');
+        Schema::dropIfExists('products');
     }
 };

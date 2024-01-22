@@ -11,7 +11,6 @@ use Maatwebsite\Excel\Imports\HeadingRowFormatter;
 use Maatwebsite\Excel\Row;
 use Maatwebsite\Excel\Concerns\OnEachRow;
 use GuzzleHttp\Exception\ClientException;
-use Illuminate\Support\Facades\Storage;
 
 HeadingRowFormatter::default('none');
 
@@ -41,7 +40,7 @@ class ProductImport implements OnEachRow, WithHeadingRow
         $product = Product::create([
             "name" => $row["Наименование"],
             "price" => $price,
-            "discount" => $row["Запретить скидки при продаже в розницу"],
+            "discount" => $row["Скидка"] ?? null,
             "description" => $row["Описание"],
             "type" => $row["Тип"],
             "external_code" => $row["Внешний код"],
@@ -53,7 +52,6 @@ class ProductImport implements OnEachRow, WithHeadingRow
 
         $excludeKeys = [
             "Наименование",
-            "Запретить скидки при продаже в розницу",
             "Описание",
             "Тип",
             "Внешний код",
@@ -89,33 +87,38 @@ class ProductImport implements OnEachRow, WithHeadingRow
         $photos = explode(',', trim($row["Доп. поле: Ссылки на фото"]));
         $client = new Client();
         foreach($photos as $photo) {
-            $photoPath = $this->storePhoto($photo, $client);
+            $photoName = $this->storePhoto($photo, $client);
+            $photoAbsPath = public_path('storage') . DIRECTORY_SEPARATOR . $photoName;
+            $photoRelPath = 'storage' . DIRECTORY_SEPARATOR . $photoName;
             ProductPhoto::create([
                 "product_id" => $productId,
                 "photo_link" => $photo,
-                "photo_path" => $photoPath,
+                "photo_path" => $photoRelPath,
+                "photo" => file_get_contents($photoAbsPath),
             ]);
         }
     }
 
     public function storePhoto(string $photoUrl, Client $client): string | null
     {
-        if (!filter_var($photoUrl, FILTER_VALIDATE_URL)) {
-            return null;
-        }
+        $photoUrl = urlencode('http://catalog.collant.ru/pics/SNL-504038_b2.jpg');
+        $photoUrl = filter_var(trim('http://catalog.collant.ru/pics/SNL-504038_b2.jpg'), FILTER_SANITIZE_URL);
+        $extension = pathinfo($photoUrl, PATHINFO_EXTENSION) ?: pathinfo($photoUrl)['extension'];
+
+        $photoName = md5(uniqid()) . '.' . $extension;
+        $directory = public_path('storage');
+        $filePath = $directory . DIRECTORY_SEPARATOR . $photoName;
+
         try {
-            $photoContent = $client->get($photoUrl);
+            $response = $client->get($photoUrl);
+            file_put_contents($filePath, $response->getBody()->getContents());
         } catch (ClientException $e) {
             return null;
         }
-        $extension = pathinfo($photoUrl)['extension'];
-
-        $photoName = md5(uniqid()) . '.' . $extension;
-        $filePath = storage_path() . $photoName;
-        if (file_put_contents($filePath, $photoContent)) {
-            return $filePath;
+        if (!file_exists($filePath)) {
+            return null;
         }
-        return null;
+        return $photoName;
         
     }
 

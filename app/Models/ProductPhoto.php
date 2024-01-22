@@ -12,6 +12,7 @@ class ProductPhoto extends Model
         'product_id',
         'photo_link',
         'photo_path',
+        'photo',
     ];
 
     public function product()

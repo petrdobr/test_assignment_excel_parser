@@ -21,9 +21,7 @@
 @foreach($products as $product)
 <tr>
 <td>   {{ $product['product_id'] }} </td>
-<td> 
-    <img width="100" src="{{ $photos[$product->product_id]['photo_link'] }}" alt="{{ $product->name }} Photo">
-    
+<td> <img width="100" src="data:image/jpg;base64,{{ base64_encode($photos[$product->product_id]['photo']) }}">
 </td>
     <td>   {{ $product['name'] }} </td>
     <td>   {{ $product['price'] }} </td>

@@ -9,9 +9,9 @@
 <body>
     <nav>
         <div class="container">
-            <a href="{{ url('/') }}">Home</a>
-            <a href="{{ url('/upload') }}">Upload</a>
-            <a href="{{ url('/products') }}">Products</a>
+            <a href="{{ url('/') }}">Главная</a>
+            <a href="{{ url('/upload') }}">Импорт</a>
+            <a href="{{ url('/products') }}">Товары</a>
         </div>
     </nav>
 

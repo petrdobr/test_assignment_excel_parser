@@ -6,7 +6,7 @@
 <h1>{{ __('Products') }}</h1>
 <table>
 <thead><tr>
-<th>№</th>
+<th>ID</th>
 <th>Фото</th>
     <th>Наименование</th>
     <th>Цена</th>
@@ -19,12 +19,13 @@
 </thead>
 <tbody>
 @foreach($products as $product)
+
 <tr>
 <td>   {{ $product['product_id'] }} </td>
 <td> <img width="100" src="data:image/jpg;base64,{{ base64_encode($photos[$product->product_id]['photo']) }}">
 </td>
-    <td>   {{ $product['name'] }} </td>
-    <td>   {{ $product['price'] }} </td>
+    <td>   <a href="products/{{ $product['product_id'] }}">{{ $product['name'] }} </a> </td>
+    <td>   {{ $product['price'] }} {{ $currency[$product->product_id] }}</td>
     <td>   {{ $product['discount'] }} </td>
     <td>   {{ $product['description'] }} </td>
     <td>   {{ $product['type'] }} </td>
@@ -34,6 +35,7 @@
         @endforeach
     </td>
 </tr>
+
 @endforeach
 </tbody>
 </table>

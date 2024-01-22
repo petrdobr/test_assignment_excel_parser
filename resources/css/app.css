@@ -52,3 +52,14 @@ th {
 tr:nth-child(even) {
     background-color: #f2f2f2;
 }
+
+.product-photos img {
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 20px;
+}
+
+.main-characteristics,
+.secondary-characteristics {
+    margin-top: 20px;
+}

@@ -41,6 +41,35 @@ class ProductController extends Controller
             });
         }, $barcodes);
         $photos = ProductPhoto::all();
-        return view("products", ['products' => $products, 'barcodes' => $barcodes, 'photos' => $photos]);
+        $currency = ProductCharacteristic::where('key', 'Валюта (Цена продажи)')->pluck('value', 'product_id');
+        return view("products", [
+            'products' => $products, 
+            'barcodes' => $barcodes, 
+            'photos' => $photos,
+            'currency' => $currency,
+        ]);
+    }
+
+    public function showProductById($id)
+    {
+        $product = Product::where('product_id', $id)->first();
+        $barcodes = $product->barcodes;
+        $barcodes = json_decode($barcodes, true);
+        $barcodes = array_filter($barcodes, function ($barcode) {
+                return $barcode !== NULL;
+            });
+        $additionalFeatures = $product->additional_features;
+        $additionalFeatures = json_decode($additionalFeatures, true);
+        $characteristics = ProductCharacteristic::where('product_id', $id)->get();
+        $currency = ProductCharacteristic::where('key', 'Валюта (Цена продажи)')->pluck('value', 'product_id');
+        $photos = ProductPhoto::where('product_id', $id)->get();
+        return view("product_view", [
+            'product' => $product, 
+            'barcodes' => $barcodes,
+            'photos' => $photos,
+            'addFeatures' => $additionalFeatures,
+            'characteristics' => $characteristics,
+            'currency' => $currency,
+        ]);
     }
 }

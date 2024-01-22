@@ -20,3 +20,4 @@ Route::get('/', function () {
 Route::get('/upload', [ProductController::class, 'showForm']);
 Route::post('/upload', [ProductController::class, 'upload']);
 Route::get('/products', [ProductController::class, 'showProducts']);
+Route::get('/products/{id}', [ProductController::class, 'showProductById']);

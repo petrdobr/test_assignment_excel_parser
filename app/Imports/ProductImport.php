@@ -33,7 +33,6 @@ class ProductImport implements OnEachRow, WithHeadingRow
             'brand' => $row["Доп. поле: Бренд"],
             'contents' => $row["Доп. поле: Состав"],
             'amount' => $row["Доп. поле: Кол-во в упаковке"],
-            'package_link' => $row["Доп. поле: Ссылка на упаковку"],
         ]);
         $price = str_replace(',', '.', ltrim($row["Цена: Цена продажи"], "'"));
         
@@ -84,7 +83,8 @@ class ProductImport implements OnEachRow, WithHeadingRow
             }
         }
 
-        $photos = explode(',', trim($row["Доп. поле: Ссылки на фото"]));
+        $photos = explode(',', $row["Доп. поле: Ссылки на фото"]);
+        $photos[] = $row["Доп. поле: Ссылка на упаковку"];
         $client = new Client();
         foreach($photos as $photo) {
             $photoName = $this->storePhoto($photo, $client);
@@ -101,8 +101,8 @@ class ProductImport implements OnEachRow, WithHeadingRow
 
     public function storePhoto(string $photoUrl, Client $client): string | null
     {
-        $photoUrl = urlencode('http://catalog.collant.ru/pics/SNL-504038_b2.jpg');
-        $photoUrl = filter_var(trim('http://catalog.collant.ru/pics/SNL-504038_b2.jpg'), FILTER_SANITIZE_URL);
+        //$photoUrl = urlencode($photoUrl);
+        $photoUrl = filter_var(trim($photoUrl), FILTER_SANITIZE_URL);
         $extension = pathinfo($photoUrl, PATHINFO_EXTENSION) ?: pathinfo($photoUrl)['extension'];
 
         $photoName = md5(uniqid()) . '.' . $extension;

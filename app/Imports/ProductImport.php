@@ -53,6 +53,7 @@ class ProductImport implements OnEachRow, WithHeadingRow
             "Наименование",
             "Описание",
             "Тип",
+            "Скидка",
             "Внешний код",
             "Штрихкод EAN13",
             "Штрихкод EAN8",
@@ -86,8 +87,9 @@ class ProductImport implements OnEachRow, WithHeadingRow
         $photos = explode(',', $row["Доп. поле: Ссылки на фото"]);
         $photos[] = $row["Доп. поле: Ссылка на упаковку"];
         $client = new Client();
+        $directory = public_path('storage');
         foreach($photos as $photo) {
-            $photoName = $this->storePhoto($photo, $client);
+            $photoName = $this->storePhoto($photo, $directory, $client);
             $photoAbsPath = public_path('storage') . DIRECTORY_SEPARATOR . $photoName;
             $photoRelPath = 'storage' . DIRECTORY_SEPARATOR . $photoName;
             ProductPhoto::create([
@@ -99,14 +101,13 @@ class ProductImport implements OnEachRow, WithHeadingRow
         }
     }
 
-    public function storePhoto(string $photoUrl, Client $client): string | null
+    public function storePhoto(string $photoUrl, string $directory, Client $client): string | null
     {
         //$photoUrl = urlencode($photoUrl);
         $photoUrl = filter_var(trim($photoUrl), FILTER_SANITIZE_URL);
         $extension = pathinfo($photoUrl, PATHINFO_EXTENSION) ?: pathinfo($photoUrl)['extension'];
 
         $photoName = md5(uniqid()) . '.' . $extension;
-        $directory = public_path('storage');
         $filePath = $directory . DIRECTORY_SEPARATOR . $photoName;
 
         try {

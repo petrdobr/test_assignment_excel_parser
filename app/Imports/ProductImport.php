@@ -19,6 +19,7 @@ class ProductImport implements OnEachRow, WithHeadingRow
     
     public function onRow(Row $row)
     {
+        //parse data and store to products table
         $row = $row->toArray();
         $barcodes = json_encode([
             'EAN13' => $row["Штрихкод EAN13"],
@@ -47,6 +48,7 @@ class ProductImport implements OnEachRow, WithHeadingRow
             "additional_features" => $additional,
         ]);
 
+        //get product_id for other tables
         $productId = $product->id;
 
         $excludeKeys = [
@@ -70,6 +72,7 @@ class ProductImport implements OnEachRow, WithHeadingRow
             "Доп. поле: Ссылки на фото",
             ];
 
+        //exclude columns written to products and photos, store to characetristics
         $characteristics = array_filter($row, function ($key) use ($excludeKeys) {
             return !in_array($key, $excludeKeys);
         }, ARRAY_FILTER_USE_KEY);
@@ -84,6 +87,7 @@ class ProductImport implements OnEachRow, WithHeadingRow
             }
         }
 
+        //create array with photo links, download photos and store them to database
         $photos = explode(',', $row["Доп. поле: Ссылки на фото"]);
         $photos[] = $row["Доп. поле: Ссылка на упаковку"];
         $client = new Client();
@@ -103,7 +107,7 @@ class ProductImport implements OnEachRow, WithHeadingRow
 
     public function storePhoto(string $photoUrl, string $directory, Client $client): string | null
     {
-        //$photoUrl = urlencode($photoUrl);
+        //download photo with http client and return the filename
         $photoUrl = filter_var(trim($photoUrl), FILTER_SANITIZE_URL);
         $extension = pathinfo($photoUrl, PATHINFO_EXTENSION) ?: pathinfo($photoUrl)['extension'];
 

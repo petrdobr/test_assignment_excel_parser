@@ -33,6 +33,8 @@ class ProductController extends Controller
     public function showProducts()
     {
         $products = Product::all();
+
+        //get barcodes and decode from json format, exclude null values
         $barcodes = Product::pluck('barcodes', 'product_id')->toArray();
         $barcodes = array_map(function ($barcodesData) {
             $barcodesArray = json_decode($barcodesData, true);
@@ -40,7 +42,11 @@ class ProductController extends Controller
                 return $barcode !== NULL;
             });
         }, $barcodes);
+
+        //get photos
         $photos = ProductPhoto::all();
+
+        //get price currency
         $currency = ProductCharacteristic::where('key', 'Валюта (Цена продажи)')->pluck('value', 'product_id');
         return view("products", [
             'products' => $products, 
@@ -52,16 +58,27 @@ class ProductController extends Controller
 
     public function showProductById($id)
     {
+        //find product by id
         $product = Product::where('product_id', $id)->first();
+
+        //get barcodes, exclude null values
         $barcodes = $product->barcodes;
         $barcodes = json_decode($barcodes, true);
         $barcodes = array_filter($barcodes, function ($barcode) {
                 return $barcode !== NULL;
             });
+
+        //get additional features, decode from json
         $additionalFeatures = $product->additional_features;
         $additionalFeatures = json_decode($additionalFeatures, true);
+
+        //get characteristics
         $characteristics = ProductCharacteristic::where('product_id', $id)->get();
+
+        //get currency for price
         $currency = ProductCharacteristic::where('key', 'Валюта (Цена продажи)')->pluck('value', 'product_id');
+        
+        //get photos
         $photos = ProductPhoto::where('product_id', $id)->get();
         return view("product_view", [
             'product' => $product, 

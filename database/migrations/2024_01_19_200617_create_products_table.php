@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('discount')->nullable();
             $table->text('description')->nullable();
             $table->string('type');
-            $table->string('external_code');
+            $table->string('external_code')->unique();
             $table->json('barcodes');
             $table->json('additional_features')->nullable();
             $table->timestamps();

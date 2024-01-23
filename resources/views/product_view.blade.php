@@ -1,11 +1,11 @@
 @extends('layouts.app')
 
-@section('title', 'Upload Excel')
+@section('title', __('Excel Upload'))
 
 @section('content')
 <div class="container">
         <div class="row">
-        <a href="{{ url('/products') }}"><< Товары</a>
+        <a href="{{ url('/products') }}"><< {{__('Products')}}</a>
             <div class="col-md-8 offset-md-2">
                 <h1>{{ $product->name }}</h1>
 
@@ -18,32 +18,32 @@
 
                 <!-- Main Characteristics -->
                 <div class="main-characteristics">
-                    <h2>Информация</h2>
+                    <h2>{{__('Information')}}</h2>
                     <p>{{ $product->description }}</p>
                     <ul>
-                            <li>Название: {{ $product->name }}</li>
-                            <li>Цена: {{ $product->price }} {{ $currency[$product->product_id] }}</li>
-                            <li>Скидка: {{ $product->discount }}</li>
-                            <li>Тип: {{ $product->type }}</li>
-                            <li>Внешний код: {{ $product->external_code }}</li>
+                            <li>{{__('Name')}}: {{ $product->name }}</li>
+                            <li>{{__('Price')}}: {{ $product->price }} {{ $currency[$product->product_id] }}</li>
+                            <li>{{__('Discount')}}: {{ $product->discount }}</li>
+                            <li>{{__('Type')}}: {{ $product->type }}</li>
+                            <li>{{__('External code')}}: {{ $product->external_code }}</li>
                             <li>   @foreach($barcodes as $type => $bc)
-                                        {{ 'Штрихкод ' . $type . ': ' . $bc }}
+                                        {{ __('Barcode') . ' ' . $type . ': ' . $bc }}
                                 @endforeach
                             </li>
 
                     </ul>
-                    <h2>Характеристики товара</h2>
+                    <h2>{{__('Product characteristics')}}</h2>
                     <ul>
-                        <li>Размер: {{ $addFeatures['size'] }}</li>
-                        <li>Цвет: {{ $addFeatures['color'] }}</li>
-                        <li>Бренд: {{ $addFeatures['brand'] }}</li>
-                        <li>Состав: {{ $addFeatures['contents'] }}</li>
-                        <li>Количество: {{ $addFeatures['amount'] }}</li>
+                        <li>{{__('Size')}}: {{ $addFeatures['size'] }}</li>
+                        <li>{{__('Color')}}: {{ $addFeatures['color'] }}</li>
+                        <li>{{__('Brand')}}: {{ $addFeatures['brand'] }}</li>
+                        <li>{{__('Contents')}}: {{ $addFeatures['contents'] }}</li>
+                        <li>{{__('Amount')}}: {{ $addFeatures['amount'] }}</li>
                     </ul>
                 </div>
                 <!-- Secondary Characteristics -->
                 <div class="secondary-characteristics">
-                    <h2>Дополнительные сведения</h2>
+                    <h2>{{__('Additional information')}}</h2>
                     <ul>
                         @foreach ($characteristics as $char)
                             <li>{{ $char->key }}: {{ $char->value }}</li>

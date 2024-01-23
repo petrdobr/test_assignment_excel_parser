@@ -1,20 +1,20 @@
 @extends('layouts.app')
 
-@section('title', 'Upload Excel')
+@section('title', __('Excel Upload'))
 
 @section('content')
 <h1>{{ __('Products') }}</h1>
 <table>
 <thead><tr>
-<th>ID</th>
-<th>Фото</th>
-    <th>Наименование</th>
-    <th>Цена</th>
-    <th>Скидка</th>
-    <th>Описание</th>
-    <th>Тип</th>
-    <th>Внешний код</th>
-    <th>Штрихкоды</th>
+    <th>ID</th>
+    <th>{{__('Photo')}}</th>
+    <th>{{__('Name')}}</th>
+    <th>{{__('Price')}}</th>
+    <th>{{__('Discount')}}</th>
+    <th>{{__('Description')}}</th>
+    <th>{{__('Type')}}</th>
+    <th>{{__('External code')}}</th>
+    <th>{{__('Barcodes')}}</th>
 </tr>
 </thead>
 <tbody>
@@ -31,7 +31,7 @@
     <td>   {{ $product['type'] }} </td>
     <td>   {{ $product['external_code'] }} </td>
     <td>   @foreach($barcodes[$product['product_id']] as $type => $bc)
-        {{ 'Штрихкод ' . $type . ': ' . $bc }}
+        {{ __('Barcode') . ' ' . $type . ': ' . $bc }}
         @endforeach
     </td>
 </tr>

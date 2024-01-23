@@ -1,6 +1,6 @@
-[![github action status](https://github.com/petrdobr/test_assignment_excel_parser/workflows/laravel/badge.svg)](../../actions)
+[![github action status](https://github.com/petrdobr/test_assignment_excel_parser/workflows/Laravel/badge.svg)](../../actions)
 ## Парсер Excel файлов
-Приложение написанное на фреймворке Laravel для парсинга файлов Excel с определенной структурой данных.
+Приложение, написанное на фреймворке Laravel для парсинга файлов Excel, имеющих определенную структуру данных.
 
 ### Установка
 Понадобятся установленные composer и php 8.2 или выше.
@@ -36,17 +36,13 @@ touch database/database.sqlite
 php artisan storage:link
 ```
 
-**Запустить сервер** по адресу localhost:8000
+**Запустить сервер** по адресу localhost:8000, использовать приложение в браузере.
 ```
 php artisan serve
 ```
-Запустить тесты
+Или запустить тесты
 ```
 php artisan test
-```
-или
-```
-vendor/bin/phpunit
 ```
 
 ### Использование приложения и описание
